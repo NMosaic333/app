@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { api } from "@/utils/api";
 import { connectWallet } from "@/utils/blockchain";
 import { NavBar } from "@/components/NavBar";
@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 export default function UserDashboard(){
   const [address, setAddress] = useState("");
   const [loans, setLoans] = useState([]);
+
+  const approved = useMemo(()=> loans.filter(l=> l.status === 'APPROVED'), [loans]);
 
   const fetchLoans = async (addr) => {
     if (!addr) return;
@@ -33,6 +35,31 @@ export default function UserDashboard(){
         <section>
           <LoanForm walletAddress={address} onCreated={()=>fetchLoans(address)} />
         </section>
+
+        <section>
+          <Card>
+            <CardHeader>
+              <CardTitle data-testid="user-approved-title">Approved Applications</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-4">
+                {approved.map((l)=> (
+                  <div key={l.id} className="rounded-lg border p-4 bg-emerald-50" data-testid="user-approved-card">
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium">${'{'}l.amount{'}'} / {""}{'{'}l.term_months{'}'}m</p>
+                      <Badge data-testid="user-approved-status">APPROVED</Badge>
+                    </div>
+                    <p className="text-xs text-slate-600 mt-2" data-testid="user-approved-hash">Hash: {l.certificate_hash?.slice(0,18)}...</p>
+                  </div>
+                ))}
+                {approved.length===0 && (
+                  <p className="text-sm text-slate-500" data-testid="user-no-approved">No approved applications yet.</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
         <section>
           <Card>
             <CardHeader>

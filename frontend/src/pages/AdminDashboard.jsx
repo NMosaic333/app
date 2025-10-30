@@ -5,11 +5,18 @@ import { NavBar } from "@/components/NavBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminDashboard(){
   const [address, setAddress] = useState("");
   const [loans, setLoans] = useState([]);
+  const [verifying, setVerifying] = useState(false);
+  const [progress, setProgress] = useState(10);
+  const [verifyResult, setVerifyResult] = useState(null); // true | false | null
+  const [currentCall, setCurrentCall] = useState({ wallet:"", hash:"" });
 
   const load = async () => {
     const res = await api.get('/loans');
@@ -26,10 +33,17 @@ export default function AdminDashboard(){
   useEffect(()=>{ load(); }, []);
 
   const verify = async (loan) => {
+    setVerifying(true); setProgress(10); setVerifyResult(null);
+    setCurrentCall({ wallet: loan.wallet_address, hash: loan.certificate_hash });
     try{
+      // fake progress while awaiting
+      const t = setInterval(()=> setProgress((p)=> Math.min(90, p+10)), 300);
       const ok = await verifyCertificate(loan.wallet_address, loan.certificate_hash);
+      clearInterval(t);
+      setProgress(100);
+      setVerifyResult(ok);
       toast[ok? 'success' : 'error'](ok? 'Certificate valid' : 'Invalid certificate');
-    }catch(e){ toast.error('Verification failed'); }
+    }catch(e){ setVerifyResult(false); toast.error('Verification failed'); }
   };
 
   const setStatus = async (loan, status) => {
@@ -80,6 +94,28 @@ export default function AdminDashboard(){
           </CardContent>
         </Card>
       </main>
+
+      <Dialog open={verifying} onOpenChange={(o)=>{ if(!o){ setVerifying(false); setProgress(10); setVerifyResult(null); }}}>
+        <DialogContent data-testid="admin-verify-dialog">
+          <DialogHeader>
+            <DialogTitle className="text-slate-900">Verifying Certificate on-chain</DialogTitle>
+            <DialogDescription data-testid="admin-verify-desc">Calling verifyCertificate(user, hash) on contract 0xF551...BeB9C (Sepolia)</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="grid grid-cols-3 gap-3 text-xs text-slate-600">
+              <div data-testid="admin-verify-user"><span className="font-medium">User:</span> {currentCall.wallet?.slice(0,6)}...{currentCall.wallet?.slice(-4)}</div>
+              <div className="col-span-2" data-testid="admin-verify-hash"><span className="font-medium">Hash:</span> {currentCall.hash?.slice(0,24)}...</div>
+            </div>
+            <Progress data-testid="admin-verify-progress" value={progress} />
+            <div className="flex items-center gap-2 text-sm">
+              {verifyResult===null && <span data-testid="admin-verify-status">Contacting contract...</span>}
+              {verifyResult===true && <span className="flex items-center gap-1 text-emerald-700" data-testid="admin-verify-success"><CheckCircle2 className="w-4 h-4"/> Certificate valid</span>}
+              {verifyResult===false && <span className="flex items-center gap-1 text-red-600" data-testid="admin-verify-fail"><XCircle className="w-4 h-4"/> Invalid certificate</span>}
+            </div>
+            <div className="text-xs text-slate-500" data-testid="admin-verify-note">This is a read call; no gas required.</div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

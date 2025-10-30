@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter, HTTPException, Query
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import ReturnDocument
 import os
 import logging
 from pathlib import Path
@@ -136,7 +137,7 @@ async def update_loan(loan_id: str, input: LoanApplicationUpdate):
         {"id": loan_id},
         {"$set": updates},
         projection={"_id": 0},
-        return_document=True,
+        return_document=ReturnDocument.AFTER,
     )
     if not res:
         raise HTTPException(status_code=404, detail="Loan not found")

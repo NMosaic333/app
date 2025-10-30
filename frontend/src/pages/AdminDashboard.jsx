@@ -36,7 +36,6 @@ export default function AdminDashboard(){
     setVerifying(true); setProgress(10); setVerifyResult(null);
     setCurrentCall({ wallet: loan.wallet_address, hash: loan.certificate_hash });
     try{
-      // fake progress while awaiting
       const t = setInterval(()=> setProgress((p)=> Math.min(90, p+10)), 300);
       const ok = await verifyCertificate(loan.wallet_address, loan.certificate_hash);
       clearInterval(t);
@@ -75,8 +74,8 @@ export default function AdminDashboard(){
                   {loans.map((l)=> (
                     <tr key={l.id} className="border-t">
                       <td className="py-3" data-testid="admin-loan-wallet">{l.wallet_address.slice(0,6)}...{l.wallet_address.slice(-4)}</td>
-                      <td>${'{'}l.amount{'}'}</td>
-                      <td>{'{'}l.term_months{'}'}m</td>
+                      <td>{l.amount}</td>
+                      <td>{l.term_months}m</td>
                       <td><Badge data-testid="admin-loan-status" variant={l.status==='APPROVED'? 'default' : l.status==='REJECTED' ? 'destructive' : 'secondary'}>{l.status}</Badge></td>
                       <td className="space-x-2 py-2">
                         <Button data-testid={`admin-verify-${l.id}`} variant="outline" onClick={()=>verify(l)}>Verify</Button>

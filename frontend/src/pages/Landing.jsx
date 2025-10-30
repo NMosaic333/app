@@ -2,28 +2,75 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Link } from "react-router-dom";
-import { ShieldCheck, BadgeCheck, Banknote, Users, CheckCircle2, Globe, TrendingUp, Wallet, FileText, Star, Building2, MessageSquare, PhoneCall, Mail, Linkedin, Twitter } from "lucide-react";
+import { Shield, ShieldCheck, BadgeCheck, Banknote, Users, CheckCircle2, Globe, TrendingUp, Wallet, FileText, Star, Building2, MessageSquare, PhoneCall, Mail, Linkedin, Twitter } from "lucide-react";
 
 export default function Landing() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       {/* NAVBAR */}
-      <header className="border-b bg-white sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-4">
-          <h1 className="font-bold text-xl text-[#0B1B3B]">FinChain Finance</h1>
-          <nav className="hidden md:flex gap-6 text-sm text-slate-700">
-            <a href="#about" className="hover:text-[#0B1B3B]">About</a>
-            <a href="#features" className="hover:text-[#0B1B3B]">Features</a>
-            <a href="#services" className="hover:text-[#0B1B3B]">Services</a>
-            <a href="#testimonials" className="hover:text-[#0B1B3B]">Testimonials</a>
-            <a href="#contact" className="hover:text-[#0B1B3B]">Contact</a>
+      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur-md shadow-sm">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <a href="#" className="flex items-center gap-2 group">
+            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 shadow-md group-hover:shadow-lg transition-all">
+              <Shield className="w-5 h-5 text-white" strokeWidth={2.5} />
+            </div>
+            <h1 className="font-bold text-xl tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+              FinChain Finance
+            </h1>
+          </a>
+
+          {/* Navigation */}
+          <nav className="hidden md:flex items-center gap-1">
+            <a 
+              href="#about" 
+              className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all"
+            >
+              About
+            </a>
+            <a 
+              href="#features" 
+              className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all"
+            >
+              Features
+            </a>
+            <a 
+              href="#services" 
+              className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all"
+            >
+              Services
+            </a>
+            <a 
+              href="#testimonials" 
+              className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all"
+            >
+              Testimonials
+            </a>
+            <a 
+              href="#contact" 
+              className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all"
+            >
+              Contact
+            </a>
           </nav>
-          <div className="flex gap-3">
-            <Link to="/dashboard"><Button>Apply Now</Button></Link>
-            <Link to="/admin"><Button variant="outline">Admin</Button></Link>
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-3">
+            <Link to="/dashboard">
+              <Button className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg transition-all">
+                Apply Now
+              </Button>
+            </Link>
+            <Link to="/admin">
+              <Button variant="outline" className="rounded-full border-slate-300 hover:bg-slate-50">
+                Admin
+              </Button>
+            </Link>
           </div>
         </div>
-      </header>
+      </div>
+    </header>
 
       {/* HERO */}
       <section className="bg-[#0B1B3B] text-white">

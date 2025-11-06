@@ -34,21 +34,27 @@ let contract = null;
 
 export async function connectWallet() {
   if (!window.ethereum) throw new Error("MetaMask not found");
+
   provider = new BrowserProvider(window.ethereum);
+
+  // Check current network
   const network = await provider.getNetwork();
   if (network.chainId !== 11155111n) {
-    try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0xaa36a7" }],
-      });
-    } catch (e) {
-      throw new Error("Please switch to Sepolia network");
-    }
+    // Ask MetaMask to switch network
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: "0xaa36a7" }], // Sepolia
+    });
+
+    // Wait a little for MetaMask to apply
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
+
+  // Request accounts
   await provider.send("eth_requestAccounts", []);
   signer = await provider.getSigner();
   contract = new Contract(contractAddress, ABI, signer);
+
   const address = await signer.getAddress();
   return { address };
 }

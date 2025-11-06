@@ -6,10 +6,8 @@ import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, XCircle, Home, Users, PieChart, Settings, FileText } from "lucide-react";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-"pdfjs-dist/build/pdf.worker.min.mjs",
-import.meta.url
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.min.js`;
+
 
 export default function AnotherAdmin() {
   const [loans, setLoans] = useState([]);
